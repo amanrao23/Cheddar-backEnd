@@ -1,0 +1,4 @@
+{
+    "mongoURI":"mongodb+srv://amanrao23:amanrao123@cluster0.gm44f.mongodb.net/cheddar?retryWrites=true&w=majority",
+    "jwtSecret":"mySecret"
+}
