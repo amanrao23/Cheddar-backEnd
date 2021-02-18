@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const EventSchema = new mongoose.Schema({
     
     sender:{
-        type: Schema.Types.ObjectId,
-        ref: 'users',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
     },
     conversation: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref:'conversation'
     },
     messageNumber:{

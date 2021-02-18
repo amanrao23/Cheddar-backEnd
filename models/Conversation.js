@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const ConversationSchema = new mongoose.Schema({
 
-    recipients: [{ type: Schema.Types.ObjectId,
-                   ref: 'users' }]
+    recipients: [{ type: mongoose.Schema.Types.ObjectId,
+                   ref: 'user' }]
 })
 
 
