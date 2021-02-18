@@ -12,4 +12,7 @@ app.use("/api/auth", require("./routes/api/auth"));
 
 app.use("/api/user", require("./routes/api/user"));
 
+
+app.use("/api/event", require("./routes/api/event"));
+
 app.listen(PORT, () => console.log(`SERVER STARTED ON 5000`));

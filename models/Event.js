@@ -6,11 +6,11 @@ const EventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
     },
-    conversation: {
+    chatRoomId: {
         type: mongoose.Schema.Types.ObjectId,
         ref:'conversation'
     },
-    messageNumber:{
+    messageId:{
         type:Number,
         required:'true',
     },
@@ -18,12 +18,12 @@ const EventSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    body: {
+    text: {
         type: String,
         required: true,
     },
     date: {
-        type: String,
+        type: Date,
         default: Date.now,
     }
 })
