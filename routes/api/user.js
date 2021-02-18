@@ -19,6 +19,6 @@ router.get('/',auth, userController.getConversations)
 // @route    POST api/users/newconversation
 // @desc     Create new conversation with a user
 // @access   Private
-router.get('/',auth, userController.newConversation)
+router.post('/newConversation',auth, userController.newConversation)
 
 module.exports = router;

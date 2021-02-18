@@ -6,7 +6,6 @@ const Conversation=require('../../models/Conversation')
 
 exports.registerUser = async (req, res) => {
     const { name, username, email, password } = req.body;
-    console.log(req.body)
     try {
       let user = await User.findOne({ email });
 
@@ -22,7 +21,6 @@ exports.registerUser = async (req, res) => {
         username,
         password
       });
-console.log(user)
       await user.save();
 
       const payload = {
@@ -50,11 +48,10 @@ console.log(user)
   exports.getConversations = async (req,res)=>{
       
     try {
-   let conversations= Conversation.find({ recipients: { $elemMatch: { $eq: req.user.id} } })
-   console.log(conversations)
-   res.json(conversations)
-    } catch (error) {
-        
+   let conversations= await Conversation.find({ recipients: { $elemMatch: { $eq: req.user.id} } })
+   res.status(200).send(conversations);
+    } 
+    catch (error) {
       console.error(err.message);
       res.status(500).send('Server error');
     }
@@ -66,17 +63,24 @@ console.log(user)
       
     const { username } = req.body;
     try {
-   let otherUser= Conversation.findOne({username:username })
-   console.log(otherUser)
+   let otherUser=  await User.findOne({username:username }).select("-password")
 
    if(!otherUser){
     res.status(404).send('This user does not exist')
    }
 
-   let newConvo= new Conversation({recipients:[req.user.id,otherUser.id]})
-   console.log(newConvo)
-
-   res.json(conversations)
+   let oldConvo= await Conversation.find({ recipients: [req.user.id,otherUser.id] })
+   console.log(oldConvo)
+   if(oldConvo){
+       res.status(200).send(oldConvo)
+   }
+   else{
+    let newConvo= new Conversation({recipients:[req.user.id,otherUser.id]})
+    await newConvo.save();
+    console.log(newConvo)
+   res.status(200).send(newConvo);
+   }
+   
     } catch (error) {
         
       console.error(err.message);

@@ -31,7 +31,6 @@ exports.authenticateUser=  async (req, res) => {
       if (password != user.password) {
         return res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
       }
-  
 
       const payload = {
         user: {
