@@ -1,17 +1,13 @@
-
-const User = require('../../models/User');
-const Conversation=require('../../models/Conversation')
 const Event=require('../../models/Event')
 
 // This 
 exports.getEvents = async (req,res)=>{
-      
+
     const { chatRoomId,timestamp } = req.body;
     try {
         if(!timestamp)
         {
         let events=  await Event.aggregate([
-
             {
                 $match:{
                  chatRoomId:chatRoomId
@@ -27,13 +23,11 @@ exports.getEvents = async (req,res)=>{
                       type:{$last:"$type"},
                       time:{$last:"$date"}
                     }
-                }
-              
+                }     
       ])
        
            res.status(200).send(events)
         }
-
         else{
             let events=  await Event.aggregate([
 
@@ -59,10 +53,7 @@ exports.getEvents = async (req,res)=>{
            
                res.status(200).send(events)
         }
-   
-   
     } catch (error) {
-        
       console.error(error.message);
       res.status(500).send('Server error');
     }
