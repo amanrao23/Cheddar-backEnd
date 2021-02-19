@@ -52,7 +52,7 @@ exports.registerUser = async (req, res) => {
    res.status(200).send(conversations);
     } 
     catch (error) {
-      console.error(err.message);
+      console.error(error.message);
       res.status(500).send('Server error');
     }
 
@@ -68,22 +68,19 @@ exports.registerUser = async (req, res) => {
    if(!otherUser){
     res.status(404).send('This user does not exist')
    }
-
-   let oldConvo= await Conversation.find({ recipients: [req.user.id,otherUser.id] })
-   console.log(oldConvo)
+   let oldConvo= await Conversation.findOne({ recipients: [req.user.id,otherUser.id] })
    if(oldConvo){
        res.status(200).send(oldConvo)
    }
    else{
     let newConvo= new Conversation({recipients:[req.user.id,otherUser.id]})
     await newConvo.save();
-    console.log(newConvo)
    res.status(200).send(newConvo);
    }
-   
+
     } catch (error) {
         
-      console.error(err.message);
+      console.error(error.message);
       res.status(500).send('Server error');
     }
 
