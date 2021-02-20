@@ -1,5 +1,6 @@
 const Event=require('../../models/Event')
 
+// This 
 exports.getEvents = async (req,res)=>{
 
     const { chatRoomId,timestamp } = req.body;
