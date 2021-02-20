@@ -3,6 +3,7 @@ const config = require("config");
 const bcrypt = require("bcryptjs");
 const User = require("../../models/User");
 const Conversation = require("../../models/Conversation");
+const socketToken =require( "../../socketToken.json")
 
 exports.registerUser = async (req, res) => {
   const { name, username, email, password } = req.body;
@@ -43,11 +44,12 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.getConversations = async (req, res) => {
+
   try {
+    console.log(socketToken)
     let conversations = await Conversation.find({
       recipients: { $elemMatch: { $eq: req.user.id } },
     }).populate("recipients");
-    console.log(conversations);
     res.status(200).send(conversations);
   } catch (error) {
     console.error(error.message);
@@ -78,6 +80,10 @@ exports.newConversation = async (req, res) => {
       newConvo = await Conversation.findOne({
         recipients: [req.user.id, otherUser.id],
       }).populate("recipients");
+      req.io.socket.join(newConvo._id)
+      if(socketToken[username]){
+        socketToken[username].join(newConvo._id)
+      }
       res.status(200).send(newConvo);
     }
   } catch (error) {
