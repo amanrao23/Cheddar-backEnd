@@ -46,7 +46,7 @@ exports.registerUser = async (req, res) => {
 exports.getConversations = async (req, res) => {
 
   try {
-    console.log(socketToken)
+    // console.log(socketToken)
     let conversations = await Conversation.find({
       recipients: { $elemMatch: { $eq: req.user.id } },
     }).populate("recipients");
@@ -69,7 +69,7 @@ exports.newConversation = async (req, res) => {
     }
     let oldConvo = await Conversation.findOne({
       recipients: [req.user.id, otherUser.id],
-    });
+    }).populate("recipients");
     if (oldConvo) {
       res.status(200).send(oldConvo);
     } else {
@@ -81,7 +81,8 @@ exports.newConversation = async (req, res) => {
         recipients: [req.user.id, otherUser.id],
       }).populate("recipients");
       req.io.socket.join(newConvo._id)
-      if(socketToken[username]){
+      console.log(socketToken[username]);
+      if(socketToken.has(username)){
         socketToken[username].join(newConvo._id)
       }
       res.status(200).send(newConvo);

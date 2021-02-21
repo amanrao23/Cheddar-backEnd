@@ -19,19 +19,26 @@ io.on("connection", (socket) => {
   // either with send()
   console.log(socket.id);
 
-  socket.on("join", ({ username,conversations }) => {
-
+  socket.on("join", ({ username, conversations }) => {
     socketToken[username] = socket;
-    if(conversations.length){
-    conversations.map((conversation)=>{socket.join(conversation.id)})}
-    
+    console.log(username,conversations,'hey joinie')
+    if (conversations.length) {
+      conversations.map((conversation) => {
+        socket.join(conversation._id);
+        console.log(conversation._id,"In the loop of joining");
+      });
+    }
+  });
+  socket.on("newEvent", ({ text, chatRoomId }) => {
+    console.log(text, "socket newEvent");
+    socket.to(chatRoomId).emit("newMessage", { text });
   });
 });
 
 app.use(function (req, res, next) {
-    req.io = io;
-    next();
-  });
+  req.io = io;
+  next();
+});
 app.use("/api/auth", require("./routes/api/auth"));
 
 app.use("/api/user", require("./routes/api/user"));
