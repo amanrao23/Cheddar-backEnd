@@ -3,7 +3,7 @@ const config = require("config");
 const bcrypt = require("bcryptjs");
 const User = require("../../models/User");
 const Conversation = require("../../models/Conversation");
-const socketToken =require( "../../socketToken.json")
+const socketToken = require("../../socketToken.json");
 
 exports.registerUser = async (req, res) => {
   const { name, username, email, password } = req.body;
@@ -44,7 +44,6 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.getConversations = async (req, res) => {
-
   try {
     // console.log(socketToken)
     let conversations = await Conversation.find({
@@ -80,10 +79,15 @@ exports.newConversation = async (req, res) => {
       newConvo = await Conversation.findOne({
         recipients: [req.user.id, otherUser.id],
       }).populate("recipients");
-      req.io.socket.join(newConvo._id)
-      console.log(socketToken[username]);
-      if(socketToken.has(username)){
-        socketToken[username].join(newConvo._id)
+      console.log("test -1");
+      console.log(req.socket.id, "test 0 ");
+
+      req.socket.join(newConvo._id);
+      console.log(username, "test1 ");
+      if (socketToken[username] !== undefined) {
+        console.log("joining the new user");
+        socketToken[username].join(newConvo._id);
+        req.socket.to(newConvo._id).emit("newConversation",{newConvo});
       }
       res.status(200).send(newConvo);
     }

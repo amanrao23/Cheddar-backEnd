@@ -14,29 +14,31 @@ const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 const io = socketio(server);
-
+var golbalSocket;
 io.on("connection", (socket) => {
   // either with send()
-  console.log(socket.id);
 
+  console.log(socket.id);
+  golbalSocket=socket;
   socket.on("join", ({ username, conversations }) => {
+
     socketToken[username] = socket;
-    console.log(username,conversations,'hey joinie')
+    console.log(username)
     if (conversations.length) {
       conversations.map((conversation) => {
         socket.join(conversation._id);
-        console.log(conversation._id,"In the loop of joining");
       });
     }
   });
   socket.on("newEvent", ({ text, chatRoomId }) => {
-    console.log(text, "socket newEvent");
+    console.log(text,chatRoomId,'newEvent again')
     socket.to(chatRoomId).emit("newMessage", { text });
+    // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
   });
 });
 
 app.use(function (req, res, next) {
-  req.io = io;
+  req.socket = golbalSocket;
   next();
 });
 app.use("/api/auth", require("./routes/api/auth"));

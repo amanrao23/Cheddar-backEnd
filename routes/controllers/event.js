@@ -3,8 +3,7 @@ const Event = require("../../models/Event");
 // This
 exports.getEvents = async (req, res) => {
   const { chatRoomId, timestamp } = req.body;
-  console.log(chatRoomId,timestamp, "getEvents hi");
-
+  
   try {
     if (!timestamp) {
       let events = await Event.aggregate([
