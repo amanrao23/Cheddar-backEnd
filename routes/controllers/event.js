@@ -1,15 +1,16 @@
 const Event = require("../../models/Event");
+const mongoose = require("mongoose");
 
 // This
 exports.getEvents = async (req, res) => {
   const { chatRoomId, timestamp } = req.body;
-  
+  // console.log(mongoose.Types.ObjectId.isValid(chatRoomId));]
   try {
     if (!timestamp) {
       let events = await Event.aggregate([
         {
           $match: {
-            chatRoomId: chatRoomId,
+            chatRoomId: new mongoose.Types.ObjectId(chatRoomId),
           },
         },
 
@@ -24,13 +25,16 @@ exports.getEvents = async (req, res) => {
           },
         },
       ]);
+      console.log(events,"getEnets")
+
       res.status(200).send(events);
     } else {
       let events = await Event.aggregate([
         {
           $match: {
             date: { $gt: new Date(timestamp) },
-            chatRoomId: chatRoomId,
+            chatRoomId: new mongoose.Types.ObjectId(chatRoomId),
+
           },
         },
 
@@ -45,7 +49,7 @@ exports.getEvents = async (req, res) => {
           },
         },
       ]);
-
+      console.log(events,"getEnets")
       res.status(200).send(events);
     }
   } catch (error) {
@@ -64,7 +68,8 @@ exports.newEvent = async (req, res) => {
       text,
       chatRoomId,
     });
-    await event.save();
+    const saveEvent = await event.save();
+
     res.status(200).send(event);
   } catch (error) {
     console.error(error.message);

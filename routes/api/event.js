@@ -7,12 +7,12 @@ const eventController= require('../controllers/event')
 // @route    GET api/event
 // @desc     GET messages of a conversation
 // @access   Private
-router.post('/',auth, eventController.getEvents);
+router.post('/getEvents',auth, eventController.getEvents);
 
 // @route    POST api/event
 // @desc     Create a new event
 // @access   Private
-router.post('/',auth, eventController.newEvent);
+router.post('/newEvent',auth, eventController.newEvent);
 
 
 module.exports = router;
