@@ -49,6 +49,7 @@ exports.getConversations = async (req, res) => {
     let conversations = await Conversation.find({
       recipients: { $elemMatch: { $eq: req.user.id } },
     }).populate("recipients");
+    
     res.status(200).send(conversations);
   } catch (error) {
     console.error(error.message);
@@ -57,7 +58,6 @@ exports.getConversations = async (req, res) => {
 };
 
 exports.newConversation = async (req, res) => {
-  console.log(req.body)
   const { username } = req.body;
   try {
     let otherUser = await User.findOne({ username: username }).select(
@@ -80,15 +80,14 @@ exports.newConversation = async (req, res) => {
       newConvo = await Conversation.findOne({
         recipients: [req.user.id, otherUser.id],
       }).populate("recipients");
-      
 
-     await req.socket.join(newConvo._id);
+      await req.socket.join(newConvo._id);
       console.log(socketToken[username], "test1 ");
       if (socketToken[username] !== undefined) {
         await socketToken[username].join(newConvo._id);
         await req.socket.in(newConvo._id).emit("newConversation", { newConvo });
       }
-     await res.status(200).send(newConvo);
+      await res.status(200).send(newConvo);
     }
   } catch (error) {
     console.error(error.message);
