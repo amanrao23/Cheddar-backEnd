@@ -57,6 +57,7 @@ exports.getConversations = async (req, res) => {
 };
 
 exports.newConversation = async (req, res) => {
+  console.log(req.body)
   const { username } = req.body;
   try {
     let otherUser = await User.findOne({ username: username }).select(
@@ -79,17 +80,15 @@ exports.newConversation = async (req, res) => {
       newConvo = await Conversation.findOne({
         recipients: [req.user.id, otherUser.id],
       }).populate("recipients");
-      console.log("test -1");
-      console.log(req.socket.id, "test 0 ");
+      
 
-      req.socket.join(newConvo._id);
-      console.log(username, "test1 ");
+     await req.socket.join(newConvo._id);
+      console.log(socketToken[username], "test1 ");
       if (socketToken[username] !== undefined) {
-        console.log("joining the new user");
-        socketToken[username].join(newConvo._id);
-        req.socket.to(newConvo._id).emit("newConversation",{newConvo});
+        await socketToken[username].join(newConvo._id);
+        await req.socket.in(newConvo._id).emit("newConversation", { newConvo });
       }
-      res.status(200).send(newConvo);
+     await res.status(200).send(newConvo);
     }
   } catch (error) {
     console.error(error.message);

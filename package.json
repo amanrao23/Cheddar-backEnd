@@ -11,6 +11,7 @@
     "express-validator": "^6.9.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.16",
+    "package.json": "^2.0.1",
     "request": "^2.88.2",
     "socket.io": "^3.1.1"
   },

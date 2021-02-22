@@ -18,10 +18,12 @@ exports.getEvents = async (req, res) => {
         {
           $group: {
             _id: "$messageId",
+            messageId: { $last: "$messageId" },
             sender: { $last: "$sender" },
             text: { $last: "$text" },
             type: { $last: "$type" },
-            time: { $last: "$date" },
+            date: { $last: "$date" },
+            chatRoomId:{$last: "$chatRoomId"}
           },
         },
       ]);
@@ -49,7 +51,6 @@ exports.getEvents = async (req, res) => {
           },
         },
       ]);
-      console.log(events,"getEnets")
       res.status(200).send(events);
     }
   } catch (error) {
@@ -68,7 +69,9 @@ exports.newEvent = async (req, res) => {
       text,
       chatRoomId,
     });
-    const saveEvent = await event.save();
+    await event.save();
+    console.log(event,"event")
+    await req.socket.to(chatRoomId).emit("newEvent", event);
 
     res.status(200).send(event);
   } catch (error) {

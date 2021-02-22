@@ -30,11 +30,11 @@ io.on("connection", (socket) => {
       });
     }
   });
-  socket.on("newEvent", ({ text, chatRoomId }) => {
-    console.log(text,chatRoomId,'newEvent again')
-    socket.to(chatRoomId).emit("newMessage", { text });
-    // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
-  });
+  // socket.on("newEvent", ({ text, chatRoomId }) => {
+  //   console.log(text,chatRoomId,'newEvent again')
+  //   socket.to(chatRoomId).emit("newMessage", { text });
+  //   // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
+  // });
 });
 
 app.use(function (req, res, next) {
