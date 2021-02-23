@@ -66,6 +66,8 @@ exports.getEvents = async (req, res) => {
 
 exports.newEvent = async (req, res) => {
   const { chatRoomId, type, messageId, text } = req.body;
+  console.log(req.body)
+
   try {
     let event = new Event({
       sender: req.user.id,
@@ -76,8 +78,9 @@ exports.newEvent = async (req, res) => {
     });
     await event.save();
     let users=await User.findById(req.user.id)
-    console.log(socketToken[users.username].id, users.username)
-    socketToken[users.username].to(chatRoomId).emit("newEvent", {event});
+  console.log(event)
+
+    socketToken[users.username].in(chatRoomId).emit("newEvent", {event});
 
     res.status(200).send(event);
   } catch (error) {
