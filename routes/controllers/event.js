@@ -2,14 +2,25 @@ const Event = require("../../models/Event");
 const mongoose = require("mongoose");
 const socketToken = require("../../socketToken.json");
 const User = require("../../models/User");
+const Conversation = require("../../models/Conversation");
 // This
 exports.getEvents = async (req, res) => {
-  const { chatRoomId, timestamp } = req.body;
-  // console.log(mongoose.Types.ObjectId.isValid(chatRoomId));]
+  const { chatRoomId, timestamp, username } = req.body;
   try {
+    if (socketToken[username] !== undefined) {
+      let userStatus = "online";
+      socketToken[username].to(chatRoomId).emit("online", { userStatus });
+    }
+    await Event.updateMany(
+      {
+        sender: { $ne: req.user.id },
+      },
+      {
+        $set: { status: "read" },
+      }
+    );
     if (!timestamp) {
       let events = await Event.aggregate([
-        
         {
           $match: {
             chatRoomId: new mongoose.Types.ObjectId(chatRoomId),
@@ -25,13 +36,13 @@ exports.getEvents = async (req, res) => {
             text: { $last: "$text" },
             type: { $last: "$type" },
             date: { $last: "$date" },
-            chatRoomId:{$last: "$chatRoomId"},
+            chatRoomId: { $last: "$chatRoomId" },
+            status: { $last: "$status" },
           },
         },
       ]);
       // User.populate(events,{path:'sender'})
-      console.log(events,"getEnets")
-      
+      console.log(events, "getEnets");
 
       res.status(200).send(events);
     } else {
@@ -40,7 +51,6 @@ exports.getEvents = async (req, res) => {
           $match: {
             date: { $gt: new Date(timestamp) },
             chatRoomId: new mongoose.Types.ObjectId(chatRoomId),
-
           },
         },
 
@@ -54,7 +64,6 @@ exports.getEvents = async (req, res) => {
             time: { $last: "$date" },
           },
         },
-        
       ]);
       res.status(200).send(events);
     }
@@ -66,7 +75,7 @@ exports.getEvents = async (req, res) => {
 
 exports.newEvent = async (req, res) => {
   const { chatRoomId, type, messageId, text } = req.body;
-  console.log(req.body)
+  console.log(req.body);
 
   try {
     let event = new Event({
@@ -77,10 +86,10 @@ exports.newEvent = async (req, res) => {
       chatRoomId,
     });
     await event.save();
-    let users=await User.findById(req.user.id)
-  console.log(event)
+    let users = await User.findById(req.user.id);
+    console.log(event);
 
-    socketToken[users.username].in(chatRoomId).emit("newEvent", {event});
+    socketToken[users.username].to(chatRoomId).emit("newEvent", { event });
 
     res.status(200).send(event);
   } catch (error) {
@@ -89,32 +98,26 @@ exports.newEvent = async (req, res) => {
   }
 };
 
-exports.fetchEventsAfterOffline =async(req,res)=>{
-
-  const {timestamp}=req.body;
+exports.fetchEventsAfterOffline = async (req, res) => {
+  // const { timestamp } = req.body;
   try {
-    let events = await Event.aggregate([
-      {
-        $match: {
-          date: { $gt: new Date(timestamp) },
-          chatRoomId: new mongoose.Types.ObjectId(chatRoomId),
-        },
-      },
+    let conversations = await Conversation.find({
+      recipients: { $elemMatch: { $eq: req.user.id } },
+    });
+    let results = [];
 
-      { $sort: { date: 1 } },
-      {
-        $group: {
-          _id: "$messageId",
-          sender: { $last: "$sender" },
-          text: { $last: "$text" },
-          type: { $last: "$type" },
-          time: { $last: "$date" },
-        },
-      },
-    ]);
-    res.status(200).send(events);
+    conversations.map(async (conversation) => {
+      let result = await Event.findOne({
+        chatRoomId: conversation._id,
+        status: "sent",
+      });
+      if (result) {
+        results.append(conversation._id);
+      }
+    });
+    res.status(200).send(results);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server error");
   }
-}
+};

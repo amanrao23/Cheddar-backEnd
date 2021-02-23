@@ -85,7 +85,7 @@ exports.newConversation = async (req, res) => {
       console.log(socketToken[username], "test1 ");
       if (socketToken[username] !== undefined) {
         await socketToken[username].join(newConvo._id);
-        await req.socket.in(newConvo._id).emit("newConversation", { newConvo });
+        await req.socket.to(newConvo._id).emit("newConversation", { newConvo });
       }
       await res.status(200).send(newConvo);
     }

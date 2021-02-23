@@ -14,5 +14,5 @@ router.post('/getEvents',auth, eventController.getEvents);
 // @access   Private
 router.post('/newEvent',auth, eventController.newEvent);
 
-
+router.get('/offlineEvents',auth, eventController.fetchEventsAfterOffline)
 module.exports = router;

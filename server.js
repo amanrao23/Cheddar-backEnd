@@ -18,12 +18,11 @@ var golbalSocket;
 io.on("connection", (socket) => {
   // either with send()
 
-  console.log(socket.id,'Add socket');
-  golbalSocket=socket;
+  console.log(socket.id, "Add socket");
+  golbalSocket = socket;
   socket.on("join", ({ username, conversations }) => {
-
     socketToken[username] = socket;
-    console.log(username)
+    console.log(username);
     if (conversations.length) {
       conversations.map((conversation) => {
         socket.join(conversation._id);
@@ -31,7 +30,7 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("newEvent", ({ text, chatRoomId }) => {
-    console.log(text,chatRoomId,'newEvent again')
+    console.log(text, chatRoomId, "newEvent again");
     socket.to(chatRoomId).emit("newMessage", { text });
     // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
   });
