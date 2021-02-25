@@ -39,6 +39,17 @@ io.on("connection", (socket) => {
     socket.to(chatRoomId).emit("showTyping", ({ chatRoomId }));
     // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
   });
+  socket.on("newReadMessage", ({ chatId }) => {
+    let messageStatus = "read";
+    socket.to(chatId).emit("readMessage", ({ messageStatus }));
+    // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
+  });
+  
+  // socket.on("disconnect", () => {
+  //   let userStatus="offline"
+  //   socket.rooms.map(room=>{socket.to(room).emit("online", ({ userStatus }))})
+  //   delete socketToken[]
+  // });
 });   
 
 app.use(function (req, res, next) {

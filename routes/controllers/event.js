@@ -8,8 +8,13 @@ exports.getEvents = async (req, res) => {
   const { chatRoomId, timestamp, username } = req.body;
   try {
     if (socketToken[username] !== undefined) {
+      let user = await User.findById(req.user.id);
       let userStatus = "online";
+      let messageStatus = "read";
       socketToken[username].to(chatRoomId).emit("online", { userStatus });
+      socketToken[user.username]
+        .to(chatRoomId)
+        .emit("readMessage", { messageStatus });
     }
     await Event.updateMany(
       {
