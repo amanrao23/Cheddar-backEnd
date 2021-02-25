@@ -34,7 +34,12 @@ io.on("connection", (socket) => {
     socket.to(chatRoomId).emit("newMessage", { text });
     // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
   });
-});
+  socket.on("typing", ({ chatRoomId }) => {
+    console.log("Typing....");
+    socket.to(chatRoomId).emit("showTyping", ({ chatRoomId }));
+    // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
+  });
+});   
 
 app.use(function (req, res, next) {
   req.socket = golbalSocket;
