@@ -29,6 +29,7 @@ io.on("connection", (socket) => {
       });
     }
   });
+
   socket.on("newEvent", ({ text, chatRoomId }) => {
     console.log(text, chatRoomId, "newEvent again");
     socket.to(chatRoomId).emit("newMessage", { text });
@@ -36,21 +37,23 @@ io.on("connection", (socket) => {
   });
   socket.on("typing", ({ chatRoomId }) => {
     console.log("Typing....");
-    socket.to(chatRoomId).emit("showTyping", ({ chatRoomId }));
+    socket.to(chatRoomId).emit("showTyping", { chatRoomId });
     // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
   });
   socket.on("newReadMessage", ({ chatId }) => {
     let messageStatus = "read";
-    socket.to(chatId).emit("readMessage", ({ messageStatus }));
+    socket.to(chatId).emit("readMessage", { messageStatus });
     // socket.manager.sockets.in(chatRoomId).emit("newMessage", { text })
   });
-  
-  // socket.on("disconnect", () => {
-  //   let userStatus="offline"
-  //   socket.rooms.map(room=>{socket.to(room).emit("online", ({ userStatus }))})
-  //   delete socketToken[]
+
+  socket.on("disconnect", () => {});
+  // socket.on("logout", () => {
+  //   let userStatus = "offline";
+  //   for (let item of socket.rooms) {
+  //     emit("online", { userStatus });
+  //   }
   // });
-});   
+});
 
 app.use(function (req, res, next) {
   req.socket = golbalSocket;
