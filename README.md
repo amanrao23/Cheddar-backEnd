@@ -10,7 +10,7 @@ https://user-images.githubusercontent.com/54672230/109388794-469c3c00-792f-11eb-
 
 ## :memo: Introduction
 
-### The aim of this project is to build a functional real-time messaging application using MERN stack. This is the frontend of the project. Find backend of the project [here](https://github.com/amanrao23/Cheddar-FrontEnd).
+### The aim of this project is to build a functional real-time messaging application using MERN stack. This is the backend of the project. Find frontend of the project [here](https://github.com/amanrao23/Cheddar-FrontEnd).
 
 <!-- 
 
